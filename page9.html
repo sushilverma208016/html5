@@ -1,0 +1,72 @@
+<html>
+    
+    <input type="file" multiple id="files"/>
+
+    <br/>
+
+    <div id="list"> 
+    </div>
+
+    <!--<img src="" id="i1"/>-->
+
+</html>
+
+<script>
+
+document.addEventListener("dragover", onDragOver, false);
+document.addEventListener("drop", onDrop, false);
+
+function onDragOver(e) {
+    e.preventDefault(); // Important!
+}
+
+function onDrop(e) {
+    e.preventDefault(); // Important!
+
+    for  ( let file of  e.dataTransfer.files ) {
+        //console.log ( file.name );
+       
+        // using xhr.send ( file ) ; // uploading the 1 file at time
+       
+        // to upload all the files create FormData and add file object to it
+        // and xhr.send ( formdata );
+
+       let reader = new FileReader();
+       reader.onload = function(e) {
+            //document.querySelector("#i1").src = e.target.result;
+            let str = "<img style='width:100px;margin:20px' src='" + e.target.result + "'/>";
+            document.querySelector("#list").innerHTML += str ;
+       };
+       reader.readAsDataURL(file);
+
+        // read the contents of the file using FileReader 
+    }
+}
+
+
+// JS code cannot access files on user hard disk without user's permission
+document.querySelector("#files").addEventListener("change", function(e) {
+    
+    for  ( let file of e.target.files ) {
+        //console.log ( file.name );
+       
+        // using xhr.send ( file ) ; // uploading the 1 file at time
+       
+        // to upload all the files create FormData and add file object to it
+        // and xhr.send ( formdata );
+
+       let reader = new FileReader();
+       reader.onload = function(e) {
+            //document.querySelector("#i1").src = e.target.result;
+            let str = "<img style='width:100px;margin:20px' src='" + e.target.result + "'/>";
+            document.querySelector("#list").innerHTML += str ;
+       };
+       reader.readAsDataURL(file);
+
+        // read the contents of the file using FileReader
+         
+    }
+
+}, false);
+
+</script>

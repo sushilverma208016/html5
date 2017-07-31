@@ -1,0 +1,53 @@
+<!DOCTYPE>
+
+<html>
+
+    <head>
+        <title>Page 1</title>
+
+        <style type="text/css">
+            h1:first-of-type, h1:last-of-type { 
+                color: red ;
+            }
+        </style>
+    </head>
+
+    <body>
+        
+        <h1>Page1</h1>
+        
+        <hr/>
+
+        <h1>Page1</h1>
+
+         <hr/>
+
+        <h1>Page1</h1>
+
+         <hr/>
+
+        <h1>Page1</h1>
+    
+    </body>
+
+</html>
+
+<!-- Code inside the script tag is submitted to JavaScript engine -->
+<script>
+
+if ( window.document.querySelectorAll == undefined ) {
+
+    window.document.write ( "Please use the browser suppporting HTML5" );
+
+} else { 
+
+    let arr = window.document.querySelectorAll("h1:first-of-type,h1:last-of-type") ;
+    // arr refers to an array containing references of all h1 DOM element objects
+
+    // javascript foreach
+    for ( let el of arr ) {
+        el.innerHTML = "Hello" ;
+    }
+}
+
+</script>

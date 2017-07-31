@@ -1,0 +1,77 @@
+<!doctype>
+
+<html>
+
+    <head>
+        <script src="/socket.io/socket.io.js"></script>
+    </head>
+
+<body>
+    
+    <canvas width="900" height="500" style="background-color:yellow;cursor:crosshair" id="c1">
+    </canvas>
+
+</body>
+
+</html>
+<script>
+
+
+    let points = [];
+
+    let cnv = window.document.querySelector("#c1");
+    cnv.addEventListener("mousedown", onMouseDown, false);
+    cnv.addEventListener("mousemove", onMouseMove, false);
+    cnv.addEventListener("mouseup", onMouseUp, false);
+
+    let ctx = cnv.getContext('2d');
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 5;
+    ctx.lineCap = "round";
+
+    var socket = io();
+    socket.on('drawing', onDrawingEvent); // to receive data coming from server
+    function onDrawingEvent(data) {
+        ctx.save();
+        ctx.strokeStyle = "blue";
+        ctx.beginPath();
+        ctx.moveTo(data.x1, data.y1);
+        ctx.lineTo(data.x2, data.y2);
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    let drag = false;
+    let spx, spy, epx, epy;
+
+    function onMouseDown(e) {
+        drag = true;
+        spx = e.clientX - cnv.offsetLeft;
+        spy = e.clientY - cnv.offsetTop;
+    }
+
+    function onMouseMove(e) {
+        if (drag == true) {
+            epx = e.clientX - cnv.offsetLeft;
+            epy = e.clientY - cnv.offsetTop;
+
+            ctx.beginPath();
+            ctx.moveTo(spx, spy);
+            ctx.lineTo(epx, epy);
+            ctx.stroke();
+
+            // points.push({ x1: spx, y1: spy, x2: epx, y2: epy });
+
+            // send to the server
+            socket.emit('drawing', { x1: spx, y1: spy, x2: epx, y2: epy });
+            
+            spx = epx;
+            spy = epy;
+        }
+    }
+
+    function onMouseUp() {
+        drag = false;
+    }
+
+</script>

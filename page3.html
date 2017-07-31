@@ -1,0 +1,116 @@
+<!doctype>
+
+<html>
+
+<body>
+    <button id="saveonserver" style="display:inline-block">Save on the Server</button>
+    <span id="status"></span>
+    
+    <br/>
+
+    <input type="text"/>
+
+    <br/>
+    
+    <img src="/loading.gif" id="loading" style="display:none"/>
+    
+    <br/>
+    
+    <canvas width="900" height="500" style="background-color:yellow;cursor:crosshair" id="c1">
+    </canvas>
+
+
+</body>
+
+</html>
+<script>
+    let points = [];
+
+    document.querySelector("#saveonserver")
+        .addEventListener("click", onSaveOnServer, false);
+
+    function onSaveOnServer() {
+        //while ( true ); // MT is stuck here forever
+        let xhr = new window.XMLHttpRequest();
+        
+        xhr.open("post", "/save/drawing", true);
+        
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        // registering the function to be called after response is posted
+        // in the message queu by IOCP-OS. this function will be called using 
+        // browser's main thread.
+        xhr.onload = function() {
+            document.querySelector("#loading").style.display = "none";
+            document.querySelector("#status").innerHTML = xhr.responseText ;
+            document.querySelector("#saveonserver").style.display = "inline-block";
+        };
+
+        xhr.send(JSON.stringify(points)); 
+        // send gives the JOB to IOCP-OS and release the Main Thread 
+        // IOCP-OS sends request to the server with data
+
+        document.querySelector("#loading").style.display = "block";
+        document.querySelector("#saveonserver").style.display = "none";
+
+    } // Main Thread returns to message without response
+
+    let cnv = window.document.querySelector("#c1");
+    cnv.addEventListener("mousedown", onMouseDown, false);
+    cnv.addEventListener("mousemove", onMouseMove, false);
+    cnv.addEventListener("mouseup", onMouseUp, false);
+
+    let ctx = cnv.getContext('2d');
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 5;
+    ctx.lineCap = "round";
+
+    if (window.localStorage.points != undefined) {
+        points = JSON.parse(window.localStorage.points);
+        for (let point of points) {
+            ctx.beginPath();
+            ctx.moveTo(point.x1, point.y1);
+            ctx.lineTo(point.x2, point.y2);
+            ctx.stroke();
+        }
+    }
+
+    let drag = false;
+    let spx, spy, epx, epy;
+
+    function onMouseDown(e) {
+        drag = true;
+        spx = e.clientX - cnv.offsetLeft;
+        spy = e.clientY - cnv.offsetTop;
+    }
+
+    function onMouseMove(e) {
+        if (drag == true) {
+            epx = e.clientX - cnv.offsetLeft;
+            epy = e.clientY - cnv.offsetTop;
+
+            ctx.beginPath();
+            ctx.moveTo(spx, spy);
+            ctx.lineTo(epx, epy);
+            ctx.stroke();
+
+            points.push({ x1: spx, y1: spy, x2: epx, y2: epy });
+
+            try {
+                window.localStorage.points = JSON.stringify(points);
+            } catch (e) {
+                if (e == QUOTA_EXCEEDED_ERR) {
+                    // Take some decision here
+                }
+            }
+
+            spx = epx;
+            spy = epy;
+        }
+    }
+
+    function onMouseUp() {
+        drag = false;
+    }
+
+</script>

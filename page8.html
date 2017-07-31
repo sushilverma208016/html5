@@ -1,0 +1,45 @@
+<html>
+    <table id="qt">
+    </table>
+</html>
+
+<script src="jquery.js"></script>
+
+<script>
+
+     var request = window.indexedDB.open("TestDatabase", 1);
+
+     request.onupgradeneeded = function (e) {
+         var db = e.target.result;
+
+         var store = db.createObjectStore("questions", { autoIncrement: true });
+         store.add({statement:"AAA", op1:"A1", op2:"A2", op3:"A3", op4:"A4", answer:1, marks:10});
+         store.add({statement:"BBB", op1:"A1", op2:"A2", op3:"A3", op4:"A4", answer:1, marks:10});
+         store.add({statement:"CCC", op1:"A1", op2:"A2", op3:"A3", op4:"A4", answer:1, marks:10});
+     };
+
+      request.onsuccess = function (e) {
+            var db = e.target.result;
+
+            var transaction = db.transaction(["questions"]);
+
+            var store = transaction.objectStore("questions");
+
+            store.openCursor().onsuccess = function (e) {
+                var cursor = e.target.result;
+                if (cursor) {
+                    
+                    $("#qt").append("<tr><td>" + cursor.key +
+                        "</td><td>" + cursor.value.statement +
+                        "</td><td>" + cursor.value.op1 +
+                        "</td><td>" + cursor.value.op2 +
+                        "</td><td>" + cursor.value.op3 +
+                        "</td><td>" + cursor.value.op4 +
+                        "</td></tr>");
+
+                    cursor.continue();
+                }
+            };
+      };
+
+</script>

@@ -1,0 +1,25 @@
+<!doctype>
+
+<html>
+    <body>
+        <input type="text"/>
+        <br/>
+        <div id="output"></div>
+    </body>
+</html>
+
+<script>
+
+    let w1 = new window.Worker("add.js"); // MT starts the ST, MT returns
+
+    w1.addEventListener("message", onMessage, false); // MT register event handler to receive result 
+
+    function onMessage(e) { // will be called by the MT
+        document.querySelector("#output").innerHTML = e.data ;
+    }
+
+    w1.postMessage ( { x: 700, y : 800 } ) ;
+
+    // MT will return to message loop
+
+</script>

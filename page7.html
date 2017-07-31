@@ -1,0 +1,103 @@
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
+    <script src="jquery.js"></script>
+
+    <style type="text/css">
+        body { 
+            font-family: 'Indie Flower', cursive;
+            font-size: 20pt;
+        }
+        #main {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 602px;
+            height: 452px;
+            margin-left: -301px;
+            margin-top: -226px;
+            background-color: #000;
+        }
+
+        canvas {            
+            /* Standard syntax */
+            transform: rotate(20deg);
+         }
+
+    </style>
+
+</head>
+
+<body>
+    <div>Page 7</div>
+    <div id="main">
+        <canvas id="c00" width="150" height="150" style="position: absolute; left: 0px; top: 0px; border: 1px solid gray"></canvas>
+        <canvas id="c01" width="150" height="150" style="position: absolute; left: 150px; top: 0px; border: 1px solid gray"></canvas>
+        <canvas id="c02" width="150" height="150" style="position: absolute; left: 300px; top: 0px; border: 1px solid gray"></canvas>
+        <canvas id="c03" width="150" height="150" style="position: absolute; left: 450px; top: 0px; border: 1px solid gray"></canvas>
+        <canvas id="c10" width="150" height="150" style="position: absolute; left: 0px; top: 150px; border: 1px solid gray"></canvas>
+        <canvas id="c11" width="150" height="150" style="position: absolute; left: 150px; top: 150px; border: 1px solid gray"></canvas>
+        <canvas id="c12" width="150" height="150" style="position: absolute; left: 300px; top: 150px; border: 1px solid gray"></canvas>
+        <canvas id="c13" width="150" height="150" style="position: absolute; left: 450px; top: 150px; border: 1px solid gray"></canvas>
+        <canvas id="c20" width="150" height="150" style="position: absolute; left: 0px; top: 300px; border: 1px solid gray"></canvas>
+        <canvas id="c21" width="150" height="150" style="position: absolute; left: 150px; top: 300px; border: 1px solid gray"></canvas>
+        <canvas id="c22" width="150" height="150" style="position: absolute; left: 300px; top: 300px; border: 1px solid gray"></canvas>
+    </div>
+</body>
+
+</html>
+
+<script>
+    var image = new window.Image();
+    image.src = "/sea.jpg";
+    image.onload = function () {
+        for (var row = 0; row < 3; row++) {
+            for (var col = 0; col < 4; col++) {
+                if (!(row == 2 && col == 3)) {
+                    let cnvctx = document.querySelector("#c" + row + col).getContext("2d");
+                    cnvctx.drawImage(image, col * 150, row * 150, 150, 150, 0, 0, 150, 150);
+                }
+            }
+        }
+
+        var _row = 2; // Row containing empty square
+        var _col = 3; // Column containing empty square
+
+        // working with jQuery objects, each jquery object holds ref. of DOM object
+        $("canvas").click(function () {
+            var piece = $(this);
+
+            // Get the row and column
+            var row = piece.position().top / 150;
+            var col = piece.position().left / 150;
+
+            if (row == _row && col == _col + 1) {
+                // Move left
+                piece.animate({ left: "-=150px" }, "slow");
+                _col++;
+            }
+            else if (row == _row && col == _col - 1) {
+                // Move right
+                piece.animate({ left: "+=150px" }, "slow");
+                _col--;
+            }
+            else if (col == _col && row == _row + 1) {
+                // Move up
+                piece.animate({ top: "-=150px" }, "slow");
+                _row++;
+            }
+            else if (col == _col && row == _row - 1) {
+                // Move down
+                piece.animate({ top: "+=150px" }, "slow");
+                _row--;
+            }
+        });
+
+    };
+
+    image.onerror = function (e) {
+        alert("Image could not obtained: ");
+    };
+
+</script>

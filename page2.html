@@ -1,0 +1,48 @@
+<!doctype>
+
+
+<html>
+    <body>
+
+        <canvas width="800" height="400" style="background-color:yellow" id="c1">
+        </canvas>
+    
+    </body>
+<html>
+
+<script>
+
+let canvasel = document.querySelector("#c1");
+let ctx = canvasel.getContext("2d");
+
+// 1
+// create the path
+ctx.beginPath();
+ctx.strokeStyle = "#FF0000";
+ctx.lineWidth = 3;
+ctx.moveTo(10,10);
+ctx.lineTo(200,200);
+ctx.lineTo(30,200);
+ctx.lineTo(30,20);
+// performs drawing using path
+ctx.stroke(); 
+
+ctx.save();
+
+// 2
+ctx.beginPath();
+ctx.strokeStyle = "#0000FF";
+ctx.lineWidth = 8;
+ctx.moveTo(30,20);
+ctx.lineTo(400,0);
+ctx.stroke(); 
+
+ctx.restore();
+
+// 3
+ctx.beginPath();
+ctx.moveTo(400,0);
+ctx.lineTo(500,500);
+ctx.stroke(); 
+
+</script>
